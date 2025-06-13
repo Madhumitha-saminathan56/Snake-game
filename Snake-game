@@ -1,0 +1,46 @@
+import pygame, sys, random
+pygame.init()
+
+# Screen setup
+size = width, height = 640, 480
+cell_size = 20
+screen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
+
+# Snake and food setup
+snake = [(100, 100), (80, 100), (60, 100)]
+direction = (20, 0)
+food = (random.randrange(0, width, cell_size),
+        random.randrange(0, height, cell_size))
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        # handle arrow keys to change direction
+
+    # Move snake
+    new_head = (snake[0][0] + direction[0], snake[0][1] + direction[1])
+    snake.insert(0, new_head)
+    if new_head == food:
+        food = (random.randrange(0, width, cell_size),
+                random.randrange(0, height, cell_size))
+    else:
+        snake.pop()
+
+    # Collision detection
+    if (new_head[0] not in range(0, width) or
+        new_head[1] not in range(0, height) or
+        new_head in snake[1:]):
+        break  # game over
+
+    # Drawing
+    screen.fill((0, 0, 0))
+    for block in snake:
+        pygame.draw.rect(screen, (0, 255, 0), (*block, cell_size, cell_size))
+    pygame.draw.rect(screen, (255, 0, 0), (*food, cell_size, cell_size))
+    pygame.display.flip()
+    clock.tick(10)  # difficulty
+
+# Optionally, display Game Over and wait for input
